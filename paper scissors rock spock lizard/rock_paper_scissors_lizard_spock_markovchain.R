@@ -5,50 +5,50 @@ library(markovchain)
 # The rules to Rock, Paper, Scissors, Spock (V), Lizard
 #     https://en.wikipedia.org/wiki/Rock-paper-scissors
 
-stateNames = c("R","P","S","V","L")
-sequence <- vector(mode='character') 
-bot_wins <- vector(mode='integer') 
+state.names = c("R", "P", "S", "V", "L")
+sequence <- vector(mode = 'character') 
+bot.wins <- vector(mode = 'integer') 
 
-sheldors_play <- function(sequence)
+SheldorsPlay <- function(sequence)
 {
-  play <- vector(mode='character')
-  if (length(sequence)< 1)
+  play <- vector(mode = 'character')
+  if (length(sequence) < 1)
   {
-    play <- sample(stateNames,1)
+    play <- sample(state.names, 1)
   }
   else
   {
-    mcFitter <- markovchainFit(data=sequence)
+    mcFitter <- markovchainFit(data = sequence)
     #play <- predict(mcFitter$estimate,newdata=tail(sequence,n=1),n.ahead=1)
     tryCatch({
-    play <- markovchainSequence(n=1,markovchain=mcFitter$estimate,t0=tail(sequence,n=1))
+    play <- markovchainSequence(n = 1, markovchain = mcFitter$estimate, t0 = tail(sequence, n = 1))
     },
     error = function (condition) {
       print(paste("  Couldn't locate transition:",conditionMessage(condition)))
     }
   )
     # If we didn't have a way to estimate a transition, we'll pick a play at random.
-    if(length(play)==0)
+    if(length(play) == 0)
     {
-      play <- sample(stateNames,1)
+      play <- sample(state.names, 1)
     }
   }
   
   if (play == "R")
-    response <- c("P","V")
+    response <- c("P", "V")
   else if (play == "P")
-    response <- c("S","L")
+    response <- c("S", "L")
   else if (play == "S")
-    response <- c("V","R")
+    response <- c("V", "R")
   else if (play == "V")
-    response <- c("L","P")
+    response <- c("L", "P")
   else if (play == "L")
-    response <- c("S","R")
+    response <- c("S", "R")
   
-  return(sample(response,1))
+  return(sample(response, 1))
 }
 
-translate_play <- function(play)
+TranslatePlay <- function(play)
 {
   numero <- 0
   if (play == "R")
@@ -65,36 +65,36 @@ translate_play <- function(play)
   return(numero)
 }
 
-determine_winner <- function(sheldor,player)
+DetermineWinner <- function(sheldor, player)
 {
-  shelnum <- translate_play(sheldor)
-  playnum <- translate_play(player)
+  shelnum <- TranslatePlay(sheldor)
+  playnum <- TranslatePlay(player)
   
-  calc_win <- (playnum - shelnum)%%5
+  calc.win <- (playnum - shelnum)%%5
   
-  if(calc_win == 1 | calc_win == 3)
-    sheldon_wins <- 0
-  else if (calc_win == 2 | calc_win == 4)
-    sheldon_wins <- 1
+  if(calc.win == 1 | calc.win == 3)
+    sheldon.wins <- 0
+  else if (calc.win == 2 | calc.win == 4)
+    sheldon.wins <- 1
   else
-    sheldon_wins <- 2  # Tie.
+    sheldon.wins <- 2  # Tie.
   
-  return(sheldon_wins)  
+  return(sheldon.wins)  
 }
 
 # Exit when a valid selection is not made.
 while(1){
   userinput <- toupper(readline("Sheldor challenges you to a duel. 'R','P','S','V','L' :"))
-  userinput <- ifelse(grepl("[RPSLV]",userinput),userinput,-1)
-  if(userinput<1){break}
+  userinput <- ifelse(grepl("[RPSLV]", userinput), userinput, -1)
+  if(userinput < 1){break}
   
-  sheldor <- sheldors_play(sequence)
-  print(paste("Sheldor played",sheldor))
-  sequence <- append(sequence,userinput)
-  winner <- determine_winner(sheldor,userinput)
+  sheldor <- SheldorsPlay(sequence)
+  print(paste("Sheldor played", sheldor))
+  sequence <- append(sequence, userinput)
+  winner <- DetermineWinner(sheldor, userinput)
   
   if (winner != 2)
-    bot_wins <- append(bot_wins,winner)
+    bot.wins <- append(bot.wins, winner)
   
   if (winner == 1)
     print("Sheldor wins!")
@@ -103,7 +103,7 @@ while(1){
   else
     print("You win!")
   
-  print(paste("Sheldor's win percentage: ",mean(bot_wins)))
+  print(paste("Sheldor's win percentage: ", mean(bot.wins)))
 }
 
 
