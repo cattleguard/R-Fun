@@ -11,7 +11,7 @@ plot(happy.little.tree, uniform=TRUE, main="Regression Tree for Complaints ")
 text(happy.little.tree, use.n=TRUE, all=TRUE, cex=.8)
 
 # Show split data on residency.
-# sum(doctor.data$complaints[doctor.data$residency == "N"])
+sum(doctor.data$complaints[doctor.data$residency == "N"])
 
 # Let's look at the average complaints for residency with the revenue split.
 #mean(doctor.data$complaints[doctor.data$residency == "Y" & doctor.data$revenue<238])
